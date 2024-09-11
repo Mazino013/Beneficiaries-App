@@ -18,24 +18,29 @@ class BeneficiaryListFragment : Fragment() {
     private lateinit var adapter: BeneficiaryAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        // Create RecyclerView programmatically
         val recyclerView = RecyclerView(requireContext()).apply {
             layoutManager = LinearLayoutManager(requireContext())
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
         }
 
+        // Initialize ViewModel
         viewModel = ViewModelProvider(this, BeneficiaryListViewModelFactory(requireContext()))
             .get(BeneficiaryListViewModel::class.java)
 
+        // Set up Adapter
         adapter = BeneficiaryAdapter { beneficiary ->
             navigateToDetail(beneficiary)
         }
 
         recyclerView.adapter = adapter
 
+        // Observe LiveData
         viewModel.beneficiaries.observe(viewLifecycleOwner) { beneficiaries ->
-            if (beneficiaries.isNotEmpty()) {
-                adapter.submitList(beneficiaries)
-            }
+            adapter.submitList(beneficiaries)
         }
 
         return recyclerView
